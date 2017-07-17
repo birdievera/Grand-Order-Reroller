@@ -12,7 +12,8 @@ from settings import PASSWORD, NAME
 PAUSE_TIME = 1.5
 TIMING_MULT = 1.5
 CLOSENESS_THRESHOLD = 0.8
-ROLLS_FOLDER = 'rolls'
+CURR = os.path.dirname(os.path.abspath(__file__))
+ROLLS_FOLDER = os.path.join(CURR, 'rolls')
 ############
 
 pyautogui.PAUSE = PAUSE_TIME
@@ -55,10 +56,15 @@ def select_card(card_no):
     touch(x=locations[card_no], y=530)
 
 def image_is_on_screen(template_name):
-    template = cv2.imread(os.path.join(
-                                'screenshots', 
-                                template_name + '.png'), 
-                    cv2.IMREAD_GRAYSCALE)
+    # Get the absolute path of the current file
+    path = os.path.join(CURR, 'screenshots', template_name + '.png')
+
+    # Perform OS check and change backslashes accordingly due to
+    # opencv imread Windows bug
+    if os.name == 'nt':
+        path = path.replace("\\","/")
+        
+    template = cv2.imread(path, cv2.IMREAD_GRAYSCALE)
     image = cv2.cvtColor(
                 np.array(pyautogui.screenshot(
                         region=(0, 0, 1300, 750))), 
